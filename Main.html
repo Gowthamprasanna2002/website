@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Form to GitHub</title>
+</head>
+<body>
+  <h2>Submit Message</h2>
+  <form id="myForm">
+    <input type="text" name="name" placeholder="Your Name" required><br><br>
+    <textarea name="message" placeholder="Your Message" required></textarea><br><br>
+    <button type="submit">Submit</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('myForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        message: form.message.value
+      };
+
+      const res = await fetch('/submit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.text();
+      document.getElementById('result').innerText = result;
+      form.reset();
+    });
+  </script>
+</body>
+</html>
