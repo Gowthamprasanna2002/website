@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Form to GitHub</title>
 </head>
 <body>
@@ -10,26 +11,37 @@
     <textarea name="message" placeholder="Your Message" required></textarea><br><br>
     <button type="submit">Submit</button>
   </form>
-  <div id="result"></div>
+  <div id="result" style="margin-top: 10px; font-weight: bold;"></div>
 
   <script>
     document.getElementById('myForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+
       const form = e.target;
       const data = {
-        name: form.name.value,
-        message: form.message.value
+        name: form.name.value.trim(),
+        message: form.message.value.trim()
       };
 
-      const res = await fetch('/submit', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch('http://localhost:3000/submit', { // Change to your backend URL
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
 
-      const result = await res.text();
-      document.getElementById('result').innerText = result;
-      form.reset();
+        if (!res.ok) {
+          throw new Error(`Server error: ${res.status}`);
+        }
+
+        const result = await res.text();
+        document.getElementById('result').innerText = result;
+        form.reset();
+
+      } catch (error) {
+        document.getElementById('result').innerText = "Error: " + error.message;
+        console.error(error);
+      }
     });
   </script>
 </body>
